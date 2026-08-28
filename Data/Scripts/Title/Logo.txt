@@ -20,6 +20,7 @@ private alias object.value7     : object.moveDelay
 private alias object.value8     : object.delayTimer
 private alias object.value9     : object.deformAmount
 private alias object.value10    : object.screenFadeInTimer
+private alias object.value11    : object.flashTimer
 
 private alias 0	:	Title_State_Init
 private alias 1	:	Title_State_FadeScreenIn
@@ -142,14 +143,13 @@ event ObjectUpdate
             object.timer = 0
             object.state++
         end if
-        SetPaletteFade(0, 2, 1, object.fadeTimer, 176, 191)
         break
 
     case Title_State_PressStart
-        object.timer++
-        if object.timer == 32
-            object.timer = 0
-            object.visible ^= true
+        object.flashTimer++
+        object.flashTimer &= 31
+        if object.flashTimer == 0
+            object.visible ^= 1
         end if
 
 #platform: MOBILE
@@ -162,37 +162,53 @@ event ObjectUpdate
 #endplatform
 
         if keypress[0].start == true
-            object.timer = 0
+            object.moveDelay = 256
+            object.delayTimer = 64
             object.state = Title_State_FlashStart
-            object.moveDelay = 48
         end if
         break
 
     case Title_State_FlashStart
-        object.timer++
-        if object.timer == 2
-            object.timer = 0
-            object.visible ^= true
-        end if
+        if object.delayTimer == 0
+            if object.moveDelay > 216
+                object.visible = true
+                Cos(temp0, object.moveDelay)
+                temp0 >>= 1
+                temp0  += 256
+                object.drawStart.y 	+= temp0
 
-        object.moveDelay--
-        if object.moveDelay <= 0
-            object.visible = true
-            object.drawStart.y += 4
-        end if
-
-        temp0 = screen.ysize
-        temp0 += 16
-        if object.drawStart.y > temp0
-            object.state = Title_State_MoveLogo
+                object.moveDelay--
+                if object.moveDelay < 0
+                    object.moveDelay = 0
+                end if
+            else
+                object.timer = 256
+                object.state = Title_State_MoveLogo
+            end if
+        else
+            object.delayTimer--
+            object.flashTimer++
+            object.flashTimer &= 3
+            if object.flashTimer == 0
+                object.visible ^= 1
+            end if
         end if
         break
 
     case Title_State_MoveLogo
-        object.drawPos.y -= 4
-        if object.drawPos.y < -72
-            object.state = Title_State_ToLevel
-        end if
+        if object.timer > 216
+			Cos(temp0, object.timer)
+			temp0 >>= 1
+			temp0  += 256
+			object.drawPos.y -= temp0
+
+			object.timer--
+			if object.timer < 0
+				object.timer = 0
+			end if
+		else
+			object.state = Title_State_ToLevel
+		end if
         break
 
     case Title_State_ToLevel
@@ -217,15 +233,17 @@ event ObjectUpdate
     SetLayerDeformation(0, 128, object.fadeInTimer, 0, 0, 0)
 
     if object.state > Title_State_FadeInFlames
-        if object.state < 6
-            object.angle++
-            Sin(temp1, object.angle)
-            temp1 >>= 6
-            object.drawPos.y = screen.ycenter
-            object.drawPos.y -= 24
-            object.drawPos.y += temp1
+        if object.state < Title_State_MoveLogo
+           object.angle += 4
+           object.angle &= 0x1ff
+           Sin(temp1, object.angle)
+           temp1 >>= 7
+           object.drawPos.y = screen.ycenter
+           object.drawPos.y -= 24
+           object.drawPos.y += temp1
         end if
     end if
+    SetPaletteFade(0, 3, 1, object.fadeTimer, 176, 191)
 end event
 
 event ObjectDraw
@@ -253,8 +271,8 @@ event ObjectStartup
 
     temp0 = 0
     while temp0 <= 255
-        SetPaletteEntry(2, temp0, 0x000000)
-        
+        SetPaletteEntry(3, temp0, 0x000000)
+
         temp0++
     loop
 

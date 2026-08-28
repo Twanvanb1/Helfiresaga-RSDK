@@ -223,24 +223,26 @@ event ObjectUpdate
 		if object.alpha > 0
 			object.alpha -= 8
 		else
+			object.timer = 256
 			object.state++
 		end if
 		break
+		
 	case SEGA_MISO_SLIDEIN
-		if object.parallaxOffsetPos.x < 1716
-			object.parallaxOffsetPos.x += 16
-		else
-			object.parallaxOffsetPos.x = 1716
-			object.timer = 0
-		end if
-
-		if object.misoLogoPos.x > screen.xcenter
-			object.misoLogoPos.x -= 8
-		else
-			object.misoLogoPos.x = screen.xcenter
-			object.inkEffect = INK_ADD
-			object.state++
-		end if
+		//if object.parallaxOffsetPos.x < 1716
+		//	object.parallaxOffsetPos.x += 16
+		//else
+		//	object.parallaxOffsetPos.x = 1716
+		//	object.timer = 0
+		//end if
+//
+		//if object.misoLogoPos.x > screen.xcenter
+		//	object.misoLogoPos.x -= 8
+		//else
+		//	object.misoLogoPos.x = screen.xcenter
+		//	object.inkEffect = INK_ADD
+		//	object.state++
+		//end if
 		
 		if object.parallaxOffsetPos.x > 1416
 			object.paletteTimer++
@@ -252,11 +254,19 @@ event ObjectUpdate
 			end if
 		end if
 
-		temp0 = screen.xcenter
-		FlipSign(temp0)
-		temp0 += object.parallaxOffsetPos.x
-		temp0 <<= 16
-		hParallax[3].scrollPos = temp0
+		if object.timer > 0
+			Cos(hParallax[3].scrollPos, object.timer)
+			hParallax[3].scrollPos 	 >>= 1
+			hParallax[3].scrollPos 	  -= 48
+			object.misoLogoPos.x 	  = hParallax[3].scrollPos
+
+			object.timer -= 3
+			if object.timer < 0
+				object.timer = 0
+			end if
+		else
+			object.state = SEGA_MISO_FLASH
+		end if
 		break
 
 	case SEGA_MISO_FLASH
