@@ -4701,79 +4701,11 @@ public function Player_State_GotHit
 			player.yvel >>= 1
 		end if
 
-		temp0 = player.rings
-		if temp0 > 16
-			temp1 = temp0
-			temp1 -= 16
-			temp0 = 16
-		else
-			temp1 = 0
-		end if
-
-		if temp1 > 16
-			temp1 = 16
-		end if
-		temp3 = temp1
-		temp3 >>= 1
-		temp3 <<= 5
-		temp2 = 384
-		temp2 -= temp3
-		temp3 >>= 4
-		if temp3 == temp1
-			temp2 += 16
-		else
-			temp2 -= 16
-		end if
-
-		temp3 = 0
-		while temp3 < temp1
-			CreateTempObject(TypeName[Lose Ring], player.collisionPlane, player.xpos, player.ypos)
-			Cos(object[tempObjectPos].xvel, temp2)
-			Sin(object[tempObjectPos].yvel, temp2)
-			object[tempObjectPos].xvel <<= 8
-			object[tempObjectPos].yvel <<= 8
-			object[tempObjectPos].animationSpeed = 256
-			object[tempObjectPos].inkEffect = INK_ALPHA
-			object[tempObjectPos].alpha = 256
-			temp3++
-			temp2 += 32
-		loop
-		temp3 = temp0
-		temp3 >>= 1
-		temp3 <<= 5
-		temp2 = 384
-		temp2 -= temp3
-		temp3 >>= 4
-		if temp3 == temp0
-			temp2 += 16
-		else
-			temp2 -= 16
-		end if
-
-		temp3 = 0
-		while temp3 < temp0
-			CreateTempObject(TypeName[Lose Ring], player.collisionPlane, player.xpos, player.ypos)
-			Cos(object[tempObjectPos].xvel, temp2)
-			Sin(object[tempObjectPos].yvel, temp2)
-			object[tempObjectPos].xvel <<= 9
-			object[tempObjectPos].yvel <<= 9
-			object[tempObjectPos].animationSpeed = 256
-			object[tempObjectPos].inkEffect = INK_ALPHA
-			object[tempObjectPos].alpha = 256
-			temp3++
-			temp2 += 32
-		loop
-		player.rings  = 0
-		ringExtraLife = 100
+		player.health--
 		break
 
 	case 3 // Death!
-#platform: USE_STANDALONE
 		player.sortedDrawOrder = 6
-#endplatform
-#platform: USE_ORIGINS
-		player.sortedDrawOrder = 7
-#endplatform
 		player.speed = 0
 		player.yvel = -0x70000
 		player.xvel = 0
@@ -4787,21 +4719,10 @@ public function Player_State_GotHit
 			if player[1].type == TypeName[Player 2 Object]
 				player[1].priority = PRIORITY_ALWAYS
 			end if
-#platform: USE_STANDALONE
 			camera[0].enabled = false
 			if options.vsMode == false
 				stage.state = STAGE_FROZEN
 			end if
-#endplatform
-
-#platform: USE_ORIGINS
-			if options.vsMode == false
-				stage.state = STAGE_FROZEN
-				camera[currentPlayer].enabled = false
-			else
-				camera[currentPlayer].style = CAMERASTYLE_STATIC
-			end if
-#endplatform
 		end if
 
 		if object[+playerCount].type == invincibilityType
@@ -4903,10 +4824,10 @@ public function Player_State_Death
 					end if
 				end if
 			else
-				if global[arrayPos0] == 0 // player.lives
-					player.type = TypeName[Death Event]
-					deathEvent.state = DEATHEVENT_GAMEOVER
-				end if
+				//if global[arrayPos0] == 0 // player.lives
+				//	player.type = TypeName[Death Event]
+				//	deathEvent.state = DEATHEVENT_GAMEOVER
+				//end if
 
 				if stage.timeOver == true
 					player.type = TypeName[Death Event]
@@ -5040,9 +4961,9 @@ public function Player_State_Drown
 #endplatform
 
 #platform: USE_STANDALONE
-			if global[arrayPos0] > 0
-				global[arrayPos0]--
-			end if
+			//if global[arrayPos0] > 0
+			//	global[arrayPos0]--
+			//end if
 #endplatform
 
 			if options.vsMode == false

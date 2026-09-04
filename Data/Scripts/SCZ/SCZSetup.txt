@@ -75,6 +75,13 @@ private table CSZSetup_deformationTable
 	1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0 // 0xA0
 end table
 
+private table CSZSetup_pentagonAniTiles
+	368, 371, 374, 377, 380, 383, 16
+	369, 372, 375, 378, 381, 384, 8
+	370, 373, 376, 379, 382, 385, 16
+	369, 372, 375, 378, 381, 384, 8
+end table
+
 // ========================
 // Function Definitions
 // ========================
@@ -148,41 +155,39 @@ end function
 // ========================
 
 event ObjectUpdate
-	//object.paletteTimer++
-	//if object.paletteTimer > 8
-	//	object.paletteTimer = 0
-	//	RotatePalette(0, 128, 175, true)
-	//end if
-
 	object.deformTimer++
 	if object.deformTimer > 3
 		tileLayer[1].deformationOffset++
 		object.deformTimer = 0
 	end if
 
-	if object.animationTimer == 0
-		object.animationTimer = 8
-		object.frame++
-		object.frame %= 4
-		temp0 = 368
-		temp0 += object.frame
+	if object.animationTimer < 2
+		GetTableValue(temp0, object.frame, CSZSetup_pentagonAniTiles)
 		Copy16x16Tile(16, temp0)
-		temp0 += 4
+		object.frame++
+		GetTableValue(temp0, object.frame, CSZSetup_pentagonAniTiles)
 		Copy16x16Tile(17, temp0)
-		temp0 += 4
+		object.frame++
+		GetTableValue(temp0, object.frame, CSZSetup_pentagonAniTiles)
 		Copy16x16Tile(18, temp0)
-		temp0 += 4
+		object.frame++
+		GetTableValue(temp0, object.frame, CSZSetup_pentagonAniTiles)
 		Copy16x16Tile(19, temp0)
-		temp0 += 4
+		object.frame++
+		GetTableValue(temp0, object.frame, CSZSetup_pentagonAniTiles)
 		Copy16x16Tile(20, temp0)
-		temp0 += 4
+		object.frame++
+		GetTableValue(temp0, object.frame, CSZSetup_pentagonAniTiles)
 		Copy16x16Tile(21, temp0)
+		object.frame++
+
+		GetTableValue(object.animationTimer, object.frame, CSZSetup_pentagonAniTiles)
+		object.frame++
+
+		object.frame %= 28
 	else
 		object.animationTimer--
 	end if
-end event
-
-event ObjectDraw
 end event
 
 event ObjectStartup
@@ -220,12 +225,12 @@ end event
 // ========================
 
 event RSDKDraw
-  DrawSprite(0)
+	DrawSprite(0)
 end event
 
 event RSDKLoad
-  LoadSpriteSheet("Global/Display.gif")
-  SpriteFrame(-16, -16, 32, 32, 1, 143)
+	LoadSpriteSheet("Global/Display.gif")
+	SpriteFrame(-16, -16, 32, 32, 1, 143)
 
-  SetVariableAlias(ALIAS_VAR_PROPVAL, "Does this work?")
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end event

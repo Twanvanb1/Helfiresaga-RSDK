@@ -63,39 +63,9 @@ reserve function FDZSetup_InitSonicRainPal
 // Tables
 // ========================
 
-public table FDZSetup_SonicPal
-	0xFF00FF, 0xe0e0e0, 0x6080c0, 0x4040a0, 0x002060, 0x400000, 0x800000, 0xe02000, 0xe0a000, 0xe08000, 0xe0a0a0, 0xa04060, 0xa0c0e0, 0xa0a0c0, 0x606080, 0x000000
-end table
-
-public table FDZSetup_SonicRainPal
-	0xFF00FF, 0xe0e0e0, 0x4060c0, 0x2020a0, 0x200060, 0x200020, 0x600020, 0xc02020, 0xc08000, 0xc06000, 0xc080a0, 0x804060, 0xc0c0e0, 0xa0a0c0, 0x6060a0, 0x000000
-end table
-
 // ========================
 // Function Definitions
 // ========================
-
-private function FDZSetup_InitSonicPal
-	temp1 = Player_superBlendClr
-	temp2 = 0
-	while temp2 < 16
-		GetTableValue(temp0, temp1, FDZSetup_SonicPal)
-		SetPaletteEntry(0, temp2, temp0)
-		temp1++
-		temp2++
-	loop
-end function
-
-private function FDZSetup_InitSonicRainPal
-	temp1 = Player_superBlendClr
-	temp2 = 0
-	while temp2 < 16
-		GetTableValue(temp0, temp1, FDZSetup_SonicRainPal)
-		SetPaletteEntry(0, temp2, temp0)
-		temp1++
-		temp2++
-	loop
-end function
 
 private function FDZSetup_SpeedUpMusic
 	CheckEqual(object[SLOT_MUSICEVENT_CHANGE].type, TypeName[Music Event])
@@ -180,15 +150,8 @@ event ObjectStartup
 	animalType1 = TypeName[Flicky]
 	animalType2 = TypeName[Ricky]
 
-	if stage.actnum > 2
-		CallFunction(FDZSetup_InitSonicRainPal)
-	else
-		CallFunction(FDZSetup_InitSonicPal)
-	end if
-
 	object[SLOT_ZONESETUP].type = TypeName[FDZ Setup]
-	object[SLOT_ZONESETUP].priority = PRIORITY_ACTIVE
-
+	object[SLOT_ZONESETUP].priority = PRIORITY_ACTIVE	
 end event
 
 // ========================
@@ -196,12 +159,12 @@ end event
 // ========================
 
 event RSDKDraw
-  DrawSprite(0)
+	DrawSprite(0)
 end event
 
 event RSDKLoad
-  LoadSpriteSheet("Global/Display.gif")
-  SpriteFrame(-16, -16, 32, 32, 1, 143)
+	LoadSpriteSheet("Global/Display.gif")
+	SpriteFrame(-16, -16, 32, 32, 1, 143)
 
-  SetVariableAlias(ALIAS_VAR_PROPVAL, "Does this work?")
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
 end event

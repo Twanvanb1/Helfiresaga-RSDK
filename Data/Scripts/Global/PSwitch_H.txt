@@ -62,7 +62,7 @@ end event
 
 
 event ObjectStartup
-	LoadSpriteSheet("Global/Display.gif")
+	LoadSpriteSheet("Global/Editor.gif")
 
 	SpriteFrame(-8, -8, 16, 16, 42, 130)
 	SpriteFrame(-8, -8, 16, 16, 59, 130)
@@ -286,7 +286,7 @@ end event
 
 
 event RSDKLoad
-	LoadSpriteSheet("Global/Display.gif")
+	LoadSpriteSheet("Global/Editor.gif")
 	
 	temp0 = 0
 	temp1 = 42

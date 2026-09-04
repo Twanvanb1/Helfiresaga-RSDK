@@ -191,27 +191,24 @@ end event
 
 
 event ObjectDraw
-	object.angle += 4
-	object.angle &= 0x3FF
+	object.angle += 2
+	object.angle &= 0x1FF
 	Sin256(temp0, object.angle)
-	//temp0 <<= 8
+	temp0 <<= 9
 
-	object.drawPos.y = temp0
-	object.drawPos.y >>= 16
+	object.drawPos.y = object.ypos
+	object.drawPos.y += temp0
 
-	object.ypos += object.drawPos.y
-
-	// All rings use the same frame
-	// (Animation is handled by Stage Setup object)
-	//DrawSprite(ringFrame)
-	temp0 = false
+	
+	temp0 = true
 	if temp0 == true
 		object.alpha = 0x80
 		object.inkEffect = INK_ALPHA
 	end if
 
-	DrawSpriteFX(ringFrame, FX_INK, object.xpos, object.ypos)
-	
+	// All rings use the same frame
+	// (Animation is handled by Stage Setup object)
+	DrawSpriteFX(ringFrame, FX_INK, object.xpos, object.drawPos.y)
 end event
 
 
@@ -222,6 +219,7 @@ event ObjectStartup
 	foreach (TypeName[Ring], arrayPos0, ALL_ENTITIES)
 		object[arrayPos0].drawOrder = 4
 		object[arrayPos0].inkEffect = INK_ALPHA
+		object[arrayPos0].angle = 0
 	next
 
 	// Ring frames
